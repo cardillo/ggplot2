@@ -5,6 +5,9 @@ NULL
 #'
 #' Does not affect position scales.  
 #' 
+#' @section Aesthetics: 
+#' \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("geom", "map")}
+#'
 #' @export
 #' @param map Data frame that contains the map coordinates.  This will 
 #'   typically be created using \code{\link{fortify}} on a spatial object. 
@@ -48,9 +51,9 @@ NULL
 #' if (require(maps)) {
 #'   states_map <- map_data("state")
 #'   ggplot(crimes, aes(map_id = state)) + geom_map(aes(fill = Murder), map = states_map) + expand_limits(x = states_map$long, y = states_map$lat)
+#'   last_plot() + coord_map()
 #'   ggplot(crimesm, aes(map_id = state)) + geom_map(aes(fill = value), map = states_map) + expand_limits(x = states_map$long, y = states_map$lat) + facet_wrap( ~ variable)
 #' }
-#' 
 geom_map <- function(mapping = NULL, data = NULL, map, stat = "identity", ...) { 
 
   # Get map input into correct form
@@ -60,7 +63,8 @@ geom_map <- function(mapping = NULL, data = NULL, map, stat = "identity", ...) {
   if (!is.null(map$region)) map$id <- map$region
   stopifnot(all(c("x", "y", "id") %in% names(map)))
   
-  GeomMap$new(geom_params = list(map = map), mapping = mapping, data = data, stat = stat, ...)
+  GeomMap$new(geom_params = list(map = map, ...), mapping = mapping, 
+    data = data, stat = stat, ...)
 }
 
 GeomMap <- proto(GeomPolygon, {
@@ -72,16 +76,16 @@ GeomMap <- proto(GeomPolygon, {
     data <- data[data$map_id %in% common, , drop = FALSE]
     map <- map[map$id %in% common, , drop = FALSE]
     
-    # Set up id variable for polygonGrob - must be sequential integers
-    map$group <- map$group %||% map$id
-    grob_id <- match(map$group, unique(map$group))
-
+    # Munch, then set up id variable for polygonGrob -
+    # must be sequential integers
+    coords <- coord_munch(coordinates, map, scales)
+    coords$group <- coords$group %||% coords$id
+    grob_id <- match(coords$group, unique(coords$group))
+    
     # Align data with map
-    data_rows <- match(map$id[!duplicated(grob_id)], data$map_id)
+    data_rows <- match(coords$id[!duplicated(grob_id)], data$map_id)
     data <- data[data_rows, , drop = FALSE]
     
-    coords <- coord_munch(coordinates, map, scales)
-
     polygonGrob(coords$x, coords$y, default.units = "native", id = grob_id,
       gp = gpar(
         col = data$colour, fill = alpha(data$fill, data$alpha), 

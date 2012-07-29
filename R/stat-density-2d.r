@@ -1,5 +1,8 @@
 #' 2d density estimation.
 #'
+#' @section Aesthetics: 
+#' \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("stat", "density2d")}
+#'
 #' @param contour If \code{TRUE}, contour the results of the 2d density
 #'   estimation
 #' @param n number of grid points in each direction
@@ -64,13 +67,12 @@ StatDensity2d <- proto(Stat, {
   required_aes <- c("x", "y")
 
   
-  icon <- function(.) GeomDensity2d$icon()
-
   calculate <- function(., data, scales, na.rm = FALSE, contour = TRUE, n = 100, ...) {
     df <- data.frame(data[, c("x", "y")])
     df <- remove_missing(df, na.rm, name = "stat_density2d", finite = TRUE)
 
-    dens <- safe.call(kde2d, c(df, n = n, ...))
+    dens <- safe.call(kde2d, list(x = df$x, y = df$y, n = n,
+      lims = c(scale_dimension(scales$x), scale_dimension(scales$y)), ...))
     df <- with(dens, data.frame(expand.grid(x = x, y = y), z = as.vector(z)))
     df$group <- data$group[1]
     

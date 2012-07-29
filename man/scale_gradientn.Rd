@@ -5,25 +5,35 @@
 \title{Smooth colour gradient between n colours}
 \usage{
   scale_colour_gradientn(..., colours, values = NULL,
-    space = "Lab", na.value = "grey50")
+    space = "Lab", na.value = "grey50",
+    guide = "colourbar")
 
   scale_fill_gradientn(..., colours, values = NULL,
-    space = "Lab", na.value = "grey50")
+    space = "Lab", na.value = "grey50",
+    guide = "colourbar")
 
   scale_color_gradientn(..., colours, values = NULL,
-    space = "Lab", na.value = "grey50")
+    space = "Lab", na.value = "grey50",
+    guide = "colourbar")
 }
 \arguments{
+  \item{guide}{Type of legend. Use \code{"colourbar"} for
+  continuous colour bar, or \code{"legend"} for discrete
+  colour legend.}
+
   \item{colours}{vector of colours}
 
   \item{values}{if colours should not be evenly positioned
-  along the gradient}
+  along the gradient this vector gives the position
+  (between 0 and 1) for each colour in the \code{colours}
+  vector. See \code{\link{rescale}} for a convience
+  function to map an arbitrary range to between 0 and 1.}
 
   \item{space}{colour space in which to calculate gradient.
   "Lab" usually best unless gradient goes through white.}
 
   \item{...}{Other arguments passed on to
-  \code{\link{continuous_scale}} to control name, limits,
+  \code{\link{discrete_scale}} to control name, limits,
   breaks, labels and so forth.}
 
   \item{na.value}{Colour to use for missing values}
@@ -53,9 +63,9 @@ max_val <- max(abs(dsub$diff))
 values <- seq(-max_val, max_val, length = 11)
 
 d + scale_colour_gradientn(colours = topo.colors(10),
-  values = values, rescale = function(x, ...) x, oob = identity)
+  values = values, rescaler = function(x, ...) x, oob = identity)
 d + scale_colour_gradientn(colours = terrain.colors(10),
-  values = values, rescale = function(x, ...) x, oob = identity)
+  values = values, rescaler = function(x, ...) x, oob = identity)
 }
 }
 \seealso{

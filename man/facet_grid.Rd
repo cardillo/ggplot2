@@ -14,8 +14,14 @@
   (either row or column). The formula can also be provided
   as a string instead of a classical formula object}
 
-  \item{margins}{logical value, should marginal rows and
-  columns be displayed}
+  \item{margins}{either a logical value or a character
+  vector. Margins are additional facets which contain all
+  the data for each of the possible values of the faceting
+  variables. If \code{FALSE}, no additional facets are
+  included (the default). If \code{TRUE}, margins are
+  included for all faceting variables. If specified as a
+  character vector, it is the names of variables for which
+  margins are to be created.}
 
   \item{scales}{Are scales shared across all facets (the
   default, \code{"fixed"}), or do they vary across rows
@@ -135,7 +141,7 @@ mpg <- within(mpg, {
   model <- reorder(model, cty)
   manufacturer <- reorder(manufacturer, cty)
 })
-last_plot() \%+\% mpg + opts(strip.text.y = theme_text())
+last_plot() \%+\% mpg + theme(strip.text.y = element_text())
 
 # Use as.table to to control direction of horizontal facets, TRUE by default
 h <- ggplot(mtcars, aes(x = mpg, y = wt)) + geom_point()
@@ -153,6 +159,19 @@ k + facet_grid(. ~ cyl2, labeller = label_parsed)
 p <- qplot(wt, mpg, data = mtcars)
 p + facet_grid(. ~ vs, labeller = label_bquote(alpha ^ .(x)))
 p + facet_grid(. ~ vs, labeller = label_bquote(.(x) ^ .(x)))
+
+# Margins can be specified by logically (all yes or all no) or by specific
+# variables as (character) variable names
+mg <- ggplot(mtcars, aes(x = mpg, y = wt)) + geom_point()
+mg + facet_grid(vs + am ~ gear)
+mg + facet_grid(vs + am ~ gear, margins = TRUE)
+mg + facet_grid(vs + am ~ gear, margins = "am")
+# when margins are made over "vs", since the facets for "am" vary
+# within the values of "vs", the marginal facet for "vs" is also
+# a margin over "am".
+mg + facet_grid(vs + am ~ gear, margins = "vs")
+mg + facet_grid(vs + am ~ gear, margins = "gear")
+mg + facet_grid(vs + am ~ gear, margins = c("gear", "am"))
 }
 }
 

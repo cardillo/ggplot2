@@ -1,5 +1,8 @@
 #' Hexagon bining.
 #'
+#' @section Aesthetics: 
+#' \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("geom", "hex")}
+#'
 #' @export
 #' @inheritParams geom_point
 #' @examples
@@ -19,7 +22,7 @@ GeomHex <- proto(Geom, {
   }
   
   required_aes <- c("x", "y")
-  default_aes <- function(.) aes(colour=NA, fill = "grey50", size=0.5, alpha = 1)
+  default_aes <- function(.) aes(colour=NA, fill = "grey50", size=0.5, alpha = NA)
   default_stat <- function(.) StatBinhex
   guide_geom <- function(.) "polygon"
   

@@ -4,13 +4,16 @@
 \usage{
   geom_raster(mapping = NULL, data = NULL,
     stat = "identity", position = "identity", hjust = 0.5,
-    vjust = 0.5, ...)
+    vjust = 0.5, interpolate = FALSE, ...)
 }
 \arguments{
   \item{hjust,vjust}{horizontal and vertical justification
   of the grob.  Each justification value should be a number
   between 0 and 1.  Defaults to 0.5 for both, centering
   each pixel over its data location.}
+
+  \item{interpolate}{If \code{TRUE} interpolate linearly,
+  if \code{FALSE} (the default) don't interpolate.}
 
   \item{mapping}{The aesthetic mapping, usually constructed
   with \code{\link{aes}} or \code{\link{aes_string}}. Only
@@ -44,6 +47,10 @@
   padding (e.g. want zero-padding), you can change the
   behavior by setting \code{hpad} and \code{vpad}.
 }
+\section{Aesthetics}{
+  \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("geom",
+  "raster")}
+}
 \examples{
 \donttest{
 # Generate data
@@ -55,6 +62,9 @@ pp <- function (n,r=4) {
  df
 }
 qplot(x, y, data = pp(20), fill = z, geom = "raster")
+# Interpolation worsens the apperance of this plot, but can help when
+# rendering images.
+qplot(x, y, data = pp(20), fill = z, geom = "raster", interpolate = TRUE)
 
 # For the special cases where it is applicable, geom_raster is much
 # faster than geom_tile:
@@ -63,13 +73,13 @@ base <- ggplot(pp200, aes(x, y, fill = z))
 benchplot(base + geom_raster())
 benchplot(base + geom_tile())
 
-# padding
+# justification
 df <- expand.grid(x = 0:5, y = 0:5)
 df$z <- runif(nrow(df))
 # default is compatible with geom_tile()
 ggplot(df, aes(x, y, fill = z)) + geom_raster()
 # zero padding
-ggplot(df, aes(x, y, fill = z)) + geom_raster(hpad = 0, vpad = 0)
+ggplot(df, aes(x, y, fill = z)) + geom_raster(hjust = 0, vjust = 0)
 }
 }
 

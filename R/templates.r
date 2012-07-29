@@ -2,7 +2,7 @@
 #' 
 #' One way to think about a parallel coordinates plot, is as plotting 
 #' the data after it has been transformed to gain a new variable.  This
-#' function does this using \code{\link[reshape]{melt}}.
+#' function does this using \code{\link[reshape2]{melt}}.
 #' 
 #' This gives us enormous flexibility as we have separated out the 
 #' type of drawing (lines by tradition) and can now use any of the existing
@@ -14,6 +14,7 @@
 #' @param ... other arguments passed on plot creation
 #' @export
 #' @examples
+#' \dontrun{
 #' ggpcp(mtcars) + geom_line()
 #' ggpcp(mtcars, vars=names(mtcars[2:6])) + geom_line()
 #' ggpcp(mtcars) + geom_boxplot(aes(group=variable))
@@ -21,8 +22,9 @@
 #' p <- ggpcp(mtcars, vars=names(mtcars[2:6]))
 #' p + geom_line()
 #' p + geom_line(aes(colour=mpg)) 
+#' }
 ggpcp <- function(data, vars=names(data), ...) {
-  
+  .Deprecated()
   scaled <- as.data.frame(lapply(data[, vars], rescale01))
   data <- cunion(scaled, data)
   
@@ -51,11 +53,14 @@ ggpcp <- function(data, vars=names(data), ...) {
 #' @param na.rm If \code{TRUE}, silently remove missing values.
 #' @export
 #' @examples
+#' \dontrun{
 #' ggfluctuation(table(movies$Action, movies$Comedy))
 #' ggfluctuation(table(movies$Action, movies$mpaa))
 #' ggfluctuation(table(movies$Action, movies$Comedy), type="colour")
 #' ggfluctuation(table(warpbreaks$breaks, warpbreaks$tension))
+#' }
 ggfluctuation <- function(table, type="size", floor=0, ceiling=max(table$freq, na.rm=TRUE)) {
+  .Deprecated()
   if (is.table(table)) table <- as.data.frame(t(table))
   
   oldnames <- names(table)
@@ -84,7 +89,7 @@ ggfluctuation <- function(table, type="size", floor=0, ceiling=max(table$freq, n
       aes_string(x="x", y="y", height="freq", width="freq", fill="border")) +
       geom_tile(colour="white") + 
       scale_fill_identity() + 
-      opts(aspect.ratio = ny / nx)
+      theme(aspect.ratio = ny / nx)
 
       # geom_rect(aes(xmin = as.numeric(x), ymin = as.numeric(y), xmax = as.numeric(x) + freq, ymax = as.numeric(y) + freq), colour="white") + 
     
@@ -117,12 +122,15 @@ ggfluctuation <- function(table, type="size", floor=0, ceiling=max(table$freq, n
 #' @seealso \code{\link{ggstructure}}, \code{\link{ggorder}}
 #' @export
 #' @examples
+#' \dontrun{
 #' mmissing <- movies
 #' mmissing[sample(nrow(movies), 1000), sample(ncol(movies), 5)] <- NA
 #' ggmissing(mmissing)
 #' ggmissing(mmissing, order=FALSE, missing.only = FALSE)
 #' ggmissing(mmissing, avoid="dodge") + scale_y_sqrt()
+#' }
 ggmissing <- function(data, avoid="stack", order=TRUE, missing.only = TRUE) {
+  .Deprecated()
   missings <- mapply(function(var, name) cbind(as.data.frame(table(missing=factor(is.na(var), levels=c(TRUE, FALSE), labels=c("yes", "no")))), variable=name), 
     data, names(data), SIMPLIFY=FALSE
   )
@@ -148,13 +156,14 @@ ggmissing <- function(data, avoid="stack", order=TRUE, missing.only = TRUE) {
 #' A plot which aims to reveal gross structural anomalies in the data.
 #' 
 #' @param data data set to plot
-#' @param scale type of scaling to use.  See \code{\link[reshape]{rescaler}}
-#'   for options
 #' @export
 #' @examples
+#' \dontrun{
 #' ggstructure(mtcars)
-ggstructure <- function(data, scale = "rank") {
-  ggpcp(data, scale=scale) + 
+#' }
+ggstructure <- function(data) {
+  .Deprecated()
+  ggpcp(data) + 
     aes_string(y="ROWID", fill="value", x="variable") +
     geom_tile() +
     scale_y_continuous("row number", expand = c(0, 1)) +
@@ -164,11 +173,10 @@ ggstructure <- function(data, scale = "rank") {
 #' A plot to investigate the order in which observations were recorded.
 #' 
 #' @param data data set to plot
-#' @param scale type of scaling to use.  See \code{\link[reshape]{rescaler}}
-#'   for options
 #' @export
-ggorder <- function(data, scale="rank") {
-  ggpcp(data, scale="rank") +
+ggorder <- function(data) {
+  .Deprecated()
+  ggpcp(data) +
     aes_string(x="ROWID", group="variable", y="value") +
     facet_grid(. ~ variable) +
     geom_line() +
@@ -177,6 +185,7 @@ ggorder <- function(data, scale="rank") {
 
 # Distribution plot.
 ggdist <- function(data, vars=names(data), facets = . ~ .) {
+  .Deprecated()
   cat <- sapply(data[vars], is.factor)
   facets <- deparse(substitute(facets))
   

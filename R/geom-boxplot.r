@@ -1,7 +1,7 @@
 #' Box and whiskers plot.
 #'
 #' The upper and lower "hinges" correspond to the first and third quartiles
-#' (the 25th and 7th percentiles). This differs slightly from the method used
+#' (the 25th and 75th percentiles). This differs slightly from the method used
 #' by the \code{boxplot} function, and may be apparent with small samples.
 #' See \code{\link{boxplot.stats}} for for more information on how hinge
 #' positions are calculated for \code{boxplot}.
@@ -15,6 +15,9 @@
 #' In a notched box plot, the notches extend \code{1.58 * IQR / sqrt(n)}.
 #' This gives a roughly 95% confidence interval for comparing medians.
 #' See McGill et al. (1978) for more details.
+#'
+#' @section Aesthetics: 
+#' \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("geom", "boxplot")}
 #'
 #' @seealso \code{\link{stat_quantile}} to view quantiles conditioned on a
 #'   continuous variable,  \code{\link{geom_jitter}} for another way to look 
@@ -128,7 +131,7 @@ GeomBoxplot <- proto(Geom, {
       size = data$size, 
       linetype = data$linetype,
       fill = alpha(data$fill, data$alpha),  
-      group = 1, 
+      group = NA, 
       stringsAsFactors = FALSE
     )
 
@@ -137,7 +140,7 @@ GeomBoxplot <- proto(Geom, {
       xend = data$x, 
       y = c(data$upper, data$lower), 
       yend = c(data$ymax, data$ymin),
-      alpha = 1,
+      alpha = NA,
       common)
 
     box <- data.frame(
@@ -160,7 +163,7 @@ GeomBoxplot <- proto(Geom, {
         shape = outlier.shape %||% data$shape[1],
         size = outlier.size %||% data$size[1],
         fill = NA,
-        alpha = 1,
+        alpha = NA,
         stringsAsFactors = FALSE)
       outliers_grob <- GeomPoint$draw(outliers, ...)
     } else {
@@ -177,7 +180,7 @@ GeomBoxplot <- proto(Geom, {
   guide_geom <- function(.) "boxplot"  
   draw_legend <- function(., data, ...)  {
     data <- aesdefaults(data, .$default_aes(), list(...))
-    gp <- with(data, gpar(col=colour, fill=alpha(fill, alpha), lwd=size * .pt))
+    gp <- with(data, gpar(col=colour, fill=alpha(fill, alpha), lwd=size * .pt, lty = linetype))
     gTree(gp = gp, children = gList(
       linesGrob(0.5, c(0.1, 0.25)),
       linesGrob(0.5, c(0.75, 0.9)),
@@ -185,17 +188,10 @@ GeomBoxplot <- proto(Geom, {
       linesGrob(c(0.125, 0.875), 0.5)
     ))
   }
-  icon <- function(.) {
-    gTree(children=gList(
-      segmentsGrob(c(0.3, 0.7), c(0.1, 0.2), c(0.3, 0.7), c(0.7, 0.95)),
-      rectGrob(c(0.3, 0.7), c(0.6, 0.8), width=0.3, height=c(0.4, 0.4), vjust=1),
-      segmentsGrob(c(0.15, 0.55), c(0.5, 0.6), c(0.45, 0.85), c(0.5, 0.6))
-    ))
-  }
   
   default_stat <- function(.) StatBoxplot
   default_pos <- function(.) PositionDodge
-  default_aes <- function(.) aes(weight=1, colour="grey20", fill="white", size=0.5, alpha = 1, shape = 16, linetype = "solid")
+  default_aes <- function(.) aes(weight=1, colour="grey20", fill="white", size=0.5, alpha = NA, shape = 16, linetype = "solid")
   required_aes <- c("x", "lower", "upper", "middle", "ymin", "ymax")
 
 })

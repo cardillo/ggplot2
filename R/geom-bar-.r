@@ -29,6 +29,9 @@
 #' \href{http://www.b-eye-network.com/view/index.php?cid=2468}{article on this topic}.  
 #' This is the reason it doesn't make sense to use a log-scaled y axis with a bar chart
 #'
+#' @section Aesthetics: 
+#' \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("geom", "bar")}
+#'
 #' @seealso \code{\link{stat_bin}} for more details of the binning alogirithm, 
 #'   \code{\link{position_dodge}} for creating side-by-side barcharts, 
 #'   \code{\link{position_stack}} for more info on stacking,
@@ -114,7 +117,7 @@ GeomBar <- proto(Geom, {
   
   default_stat <- function(.) StatBin
   default_pos <- function(.) PositionStack
-  default_aes <- function(.) aes(colour=NA, fill="grey20", size=0.5, linetype=1, weight = 1, alpha = 1)
+  default_aes <- function(.) aes(colour=NA, fill="grey20", size=0.5, linetype=1, weight = 1, alpha = NA)
   
   required_aes <- c("x")
  
@@ -131,9 +134,4 @@ GeomBar <- proto(Geom, {
     GeomRect$draw_groups(data, scales, coordinates, ...)
   }
   guide_geom <- function(.) "polygon"
-  
-  
-  icon <- function(.) {
-    rectGrob(c(0.3, 0.7), c(0.4, 0.8), height=c(0.4, 0.8), width=0.3, vjust=1, gp=gpar(fill="grey20", col=NA))
-  }
 })

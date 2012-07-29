@@ -20,7 +20,10 @@ facet_train_layout.null <- function(facet, data) {
 
 #' @S3method facet_map_layout null
 facet_map_layout.null <- function(facet, data, layout) {
-  if (empty(data)) return(data.frame(PANEL = 1))
+  # Need the is.waive check for special case where no data, but aesthetics
+  # are mapped to vectors, like qplot(1:5, 1:5)
+  if (is.waive(data) || empty(data))
+    return(cbind(data, PANEL = integer(0)))
   data$PANEL <- 1L
   data
 }
@@ -54,23 +57,16 @@ facet_render.null <- function(facet, panel, coord, theme, geom_grobs) {
     zeroGrob(), axis_h
   ), ncol = 2, byrow = TRUE)
   
-  layout <- layout_matrix("layout", all, 
+  layout <- gtable_matrix("layout", all,
     widths = unit.c(grobWidth(axis_v), unit(1, "null")),
     heights = unit.c(unit(aspect_ratio, "null"), grobHeight(axis_h)),
-    respect = respect, clip = c("off", "off", "on", "off")
+    respect = respect, clip = c("off", "off", "on", "off"),
+    z = matrix(c(3, 2, 1, 4), ncol = 2, byrow = TRUE)
   )
   layout$layout$name <- c("axis-l", "spacer", "panel", "axis-b")
   
   layout
 }
-  
-icon.facet_null <- function(.) {
-  gTree(children = gList(
-    rectGrob(0, 1, width=0.95, height=0.05, hjust=0, vjust=1, gp=gpar(fill="grey60", col=NA)),
-    rectGrob(0.95, 0.95, width=0.05, height=0.95, hjust=0, vjust=1, gp=gpar(fill="grey60", col=NA)),
-    segmentsGrob(c(0, 0.475), c(0.475, 0), c(1, 0.475), c(0.475, 1))
-  ))
-}  
 
 #' @S3method facet_vars null
 facet_vars.null <- function(facet) ""

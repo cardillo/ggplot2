@@ -24,9 +24,10 @@ new_panel <- function() {
 # @param the panel object to train
 # @param the facetting specification
 # @param data a list of data frames (one for each layer), and one for the plot
+# @param plot_data the default data frame
 # @return an updated panel object
 train_layout <- function(panel, facet, data, plot_data) {
-  layout <- facet_train_layout(facet, c(data, list(plot_data)))
+  layout <- facet_train_layout(facet, c(list(plot_data), data))
   panel$layout <- layout
   panel$shrink <- facet$shrink
   
@@ -47,7 +48,7 @@ train_layout <- function(panel, facet, data, plot_data) {
 # @param plot_data default plot data frame
 map_layout <- function(panel, facet, data, plot_data) {
   lapply(data, function(data) {
-    if (empty(data)) data <- plot_data
+    if (is.waive(data)) data <- plot_data
     facet_map_layout(facet, data, panel$layout)
   })    
 }
@@ -57,11 +58,11 @@ map_layout <- function(panel, facet, data, plot_data) {
 # If panel-specific scales are not already present, will clone from
 # the scales provided in the parameter
 #
-# @param the panel object to train
+# @param panel the panel object to train
 # @param data a list of data frames (one for each layer)  
 # @param x_scale x scale for the plot
 # @param y_scale y scale for the plot
-train_position <- function(panel, data, x_scale, y_scale) { 
+train_position <- function(panel, data, x_scale, y_scale) {
   # Initialise scales if needed, and possible.
   layout <- panel$layout
   if (is.null(panel$x_scales) && !is.null(x_scale)) {
@@ -138,6 +139,7 @@ map_position <- function(panel, data, x_scale, y_scale) {
 # speed
 scale_apply <- function(data, vars, f, scale_id, scales) {
   if (length(vars) == 0) return()
+  if (nrow(data) == 0) return()
   
   n <- length(scales)
   if (any(is.na(scale_id))) stop()
@@ -194,10 +196,10 @@ calculate_stats <- function(panel, data, layers) {
 }
 
 
-xlabel <- function(panel, theme) {
-  panel$x_scales[[1]]$name %||% theme$labels$x
+xlabel <- function(panel, labels) {
+  panel$x_scales[[1]]$name %||% labels$x
 }
   
-ylabel <- function(panel, theme) {
-  panel$y_scales[[1]]$name %||% theme$labels$y
+ylabel <- function(panel, labels) {
+  panel$y_scales[[1]]$name %||% labels$y
 }

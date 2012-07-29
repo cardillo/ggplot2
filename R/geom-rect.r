@@ -1,5 +1,8 @@
 #' 2d rectangles.
 #'
+#' @section Aesthetics: 
+#' \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("geom", "rect")}
+#'
 #' @inheritParams geom_point
 #' @export
 #' @examples
@@ -18,7 +21,7 @@ GeomRect <- proto(Geom, {
   
   default_stat <- function(.) StatIdentity
   default_pos <- function(.) PositionIdentity
-  default_aes <- function(.) aes(colour=NA, fill="grey20", size=0.5, linetype=1, alpha = 1)
+  default_aes <- function(.) aes(colour=NA, fill="grey20", size=0.5, linetype=1, alpha = NA)
   
   required_aes <- c("xmin", "xmax", "ymin", "ymax")
 
@@ -53,11 +56,6 @@ GeomRect <- proto(Geom, {
     
   }
   guide_geom <- function(.) "polygon"
-
-  icon <- function(.) {
-    rectGrob(c(0.3, 0.7), c(0.4, 0.8), height=c(0.4, 0.8), width=0.3, vjust=1, gp=gpar(fill="grey20", col=NA))
-  }
-  
 
 })
 

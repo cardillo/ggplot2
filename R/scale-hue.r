@@ -1,7 +1,7 @@
 #' Qualitative colour scale with evenly spaced hues.
 #' 
 #' @param na.value Colour to use for missing values
-#' @param ... Other arguments passed on to \code{\link{continuous_scale}} 
+#' @param ... Other arguments passed on to \code{\link{discrete_scale}} 
 #'   to control name, limits, breaks, labels and so forth.
 #' @inheritParams scales::hue_pal
 #' @rdname scale_hue
@@ -52,10 +52,4 @@ scale_colour_hue <- function(..., h = c(0, 360) + 15, c = 100, l = 65, h.start =
 scale_fill_hue <- function(..., h = c(0, 360) + 15, c = 100, l = 65, h.start = 0, direction = 1, na.value = "grey50") {
   discrete_scale("fill", "hue", hue_pal(h, c, l, h.start, direction), 
     na.value = na.value, ...)
-}
-
-icon.hue <- function() {
-  rectGrob(c(0.1, 0.3, 0.5, 0.7, 0.9), width=0.21, 
-    gp=gpar(fill=hcl(seq(0, 360, length=6)[-6], c=100, l=65), col=NA)
-  )
 }

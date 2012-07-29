@@ -1,5 +1,8 @@
 #' Textual annotations.
 #' 
+#' @section Aesthetics: 
+#' \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("geom", "text")}
+#'
 #' @inheritParams geom_point
 #' @param parse If TRUE, the labels will be parsed into expressions and
 #'   displayed as described in ?plotmath
@@ -33,7 +36,7 @@
 #' 
 #' # Add an annotation not from a variable source
 #' c <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
-#' c + geom_text(data = data.frame(), aes(5, 30, label = "plot mpg vs. wt"))
+#' c + geom_text(data = NULL, x = 5, y = 30, label = "plot mpg vs. wt")
 #' # Or, you can use annotate
 #' c + annotate("text", label = "plot mpg vs. wt", x = 2, y = 15, size = 8, colour = "red")
 #'
@@ -43,7 +46,7 @@
 #' qplot(wt, mpg, data = mtcars, label = rownames(mtcars), size = wt) +
 #'   geom_text(colour = "red")
 #'
-#' # You can specify fontfamily, fontface and lineheight
+#' # You can specify family, fontface and lineheight
 #' p <- ggplot(mtcars, aes(x=wt, y=mpg, label=rownames(mtcars)))
 #' p + geom_text(fontface=3)
 #' p + geom_text(aes(fontface=am+1))
@@ -85,11 +88,10 @@ GeomText <- proto(Geom, {
   }
 
   
-  icon <- function(.) textGrob("text", rot=45, gp=gpar(cex=1.2))
   default_stat <- function(.) StatIdentity
   required_aes <- c("x", "y", "label")
   default_aes <- function(.) aes(colour="black", size=5 , angle=0, hjust=0.5,
-    vjust=0.5, alpha = 1, family="", fontface=1, lineheight=1.2)
+    vjust=0.5, alpha = NA, family="", fontface=1, lineheight=1.2)
   guide_geom <- function(x) "text"
   
 })

@@ -16,7 +16,7 @@
   One way to think about a parallel coordinates plot, is as
   plotting the data after it has been transformed to gain a
   new variable.  This function does this using
-  \code{\link[reshape]{melt}}.
+  \code{\link[reshape2]{melt}}.
 }
 \details{
   This gives us enormous flexibility as we have separated
@@ -26,6 +26,7 @@
   shown in the example.
 }
 \examples{
+\dontrun{
 ggpcp(mtcars) + geom_line()
 ggpcp(mtcars, vars=names(mtcars[2:6])) + geom_line()
 ggpcp(mtcars) + geom_boxplot(aes(group=variable))
@@ -33,5 +34,6 @@ ggpcp(mtcars) + geom_boxplot(aes(group=variable))
 p <- ggpcp(mtcars, vars=names(mtcars[2:6]))
 p + geom_line()
 p + geom_line(aes(colour=mpg))
+}
 }
 

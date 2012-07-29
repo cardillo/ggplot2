@@ -11,19 +11,22 @@
 #' update_labels(p, list(colour = "Fail silently"))
 update_labels <- function(p, labels) {
   p <- plot_clone(p)
-  p + opts(labels = labels)
+  p$labels <- defaults(labels, p$labels)
+  p
 }
 
 #' Change axis labels and legend titles
 #' 
+#' @param label The text for the axis or plot title.
 #' @param ... a list of new names in the form aesthetic = "new name"
-#' @aliases labs xlab ylab
-#' @export labs xlab ylab
+#' @export
 #' @examples
 #' p <- qplot(mpg, wt, data = mtcars)
+#' p + labs(title = "New plot title")
 #' p + labs(x = "New x label")
 #' p + xlab("New x label")
 #' p + ylab("New y label")
+#' p + ggtitle("New plot title")
 #'
 #' # This should work indepdendently of other functions that modify the 
 #' # the scale names
@@ -35,18 +38,28 @@ update_labels <- function(p, labels) {
 #' p + labs(colour = "Cylinders")
 #'
 #' # Can also pass in a list, if that is more convenient
-#' p + labs(list(x = "X", y = "Y")) 
+#' p + labs(list(title = "Title", x = "X", y = "Y")) 
 labs <- function(...) {
   args <- list(...)
   if (is.list(args[[1]])) args <- args[[1]]
+  args <- rename_aes(args)
   structure(args, class = "labels")
 }
 
+#' @rdname labs
+#' @export
 xlab <- function(label) {
   labs(x = label)
 }
+#' @rdname labs
+#' @export
 ylab <- function(label) {
   labs(y = label)
+}
+#' @rdname labs
+#' @export
+ggtitle <- function(label) {
+  labs(title = label)
 }
 
 # Convert aesthetic mapping into text labels

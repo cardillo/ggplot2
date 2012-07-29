@@ -1,5 +1,8 @@
 #' Hollow bar with middle indicated by horizontal line.
 #'
+#' @section Aesthetics: 
+#' \Sexpr[results=rd,stage=build]{ggplot2:::rd_aesthetics("geom", "crossbar")}
+#'
 #' @inheritParams geom_point
 #' @param fatten a multiplicate factor to fatten middle bar by
 #' @seealso \code{\link{geom_errorbar}} for error bars,
@@ -17,13 +20,6 @@ fatten = 2, ...) {
 
 GeomCrossbar <- proto(Geom, {
   objname <- "crossbar"
-
-  icon <- function(.) {
-    gTree(children=gList(
-      rectGrob(c(0.3, 0.7), c(0.6, 0.8), width=0.3, height=c(0.4, 0.4), vjust=1),
-      segmentsGrob(c(0.15, 0.55), c(0.5, 0.6), c(0.45, 0.85), c(0.5, 0.6))
-    ))
-  }
   
   reparameterise <- function(., df, params) {
     GeomErrorbar$reparameterise(df, params)
@@ -31,12 +27,12 @@ GeomCrossbar <- proto(Geom, {
 
   default_stat <- function(.) StatIdentity
   default_pos <- function(.) PositionIdentity
-  default_aes = function(.) aes(colour="black", fill=NA, size=0.5, linetype=1, alpha = 1)
+  default_aes = function(.) aes(colour="black", fill=NA, size=0.5, linetype=1, alpha = NA)
   required_aes <- c("x", "y", "ymin", "ymax")
   guide_geom <- function(.) "path"
   
   draw <- function(., data, scales, coordinates, fatten = 2, width = NULL, ...) {
-    middle <- transform(data, x = xmin, xend = xmax, yend = y, size = size * fatten, alpha = 1)
+    middle <- transform(data, x = xmin, xend = xmax, yend = y, size = size * fatten, alpha = NA)
 
     has_notch <- !is.null(data$ynotchlower) && !is.null(data$ynotchupper) && 
       !is.na(data$ynotchlower) && !is.na(data$ynotchupper)
